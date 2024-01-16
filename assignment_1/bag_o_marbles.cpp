@@ -43,7 +43,7 @@ int main() {
                     break;
                 }
                 if(i == 0){
-                    cout << "bag already empty";
+                    cout << "bag already empty\n";
                 }
             }
         }else if(input == "3"){
@@ -53,7 +53,7 @@ int main() {
                 cout << i << ": " << bag[i] << '\n';
             }
         }else{
-            cout << "exiting";
+            cout << "exiting\n";
             running = 0;
         }
     }
@@ -63,3 +63,9 @@ int main() {
 int rand_num(int min, int max){
     return rand() % (max - min + 1) + min;
 }
+
+/*not sure of good method to implement automated testing, 
+so I just ran the program and attempted to break it. 
+to the extent I manually tested it, it holds up.
+I can start with an empty bag, add and remove the same marble,
+and view the bags marbles succesfully.*/
