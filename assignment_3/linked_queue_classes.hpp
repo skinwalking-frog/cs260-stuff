@@ -4,11 +4,10 @@ class Node
 {
 public:
     int data;
-    int ID;
     Node *next;
     Node *previous;
 
-    Node(/* args */);
+    Node(int);
 
     ~Node();
 };
