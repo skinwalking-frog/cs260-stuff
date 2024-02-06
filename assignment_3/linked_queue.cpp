@@ -51,12 +51,14 @@ int Queue::dequeue()
         Node *todestroy = head;
         head = nullptr;
         delete todestroy;
+        length --;
     }else{
         retval = head->data;
         Node *todestroy = head;
         head = head->previous;
         head->next = nullptr;
         delete todestroy;
+        length --;
     }
     return retval;
 }
@@ -73,6 +75,11 @@ int main() {
     cout << "dequeued node with value:" << Q.dequeue() << endl;
     cout << "dequeued node with value:" << Q.dequeue() << endl;
     cout << "dequeued node with value:" << Q.dequeue() << endl;
+
+    cout << "beginning tests\n";
+
+    int test_outcome = test();
+    cout << test_outcome;
 
     return 0;
 }

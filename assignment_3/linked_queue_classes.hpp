@@ -27,3 +27,5 @@ public:
 
     void peek();
 };
+
+int test();
