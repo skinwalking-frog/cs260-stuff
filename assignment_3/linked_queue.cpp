@@ -4,6 +4,8 @@
 using std::cout;
 using std::endl;
 
+
+//method definitions
 Node::Node(int D = 0){
     data = D;
     next = nullptr;
@@ -22,9 +24,10 @@ Queue::Queue(){
     length = 0;
 };
 
+//queues node passed by pointer
 int Queue::enqueue(Node* QueuedNode)
 { 
-    if(tail == nullptr){
+    if(tail == nullptr){ 
         tail = QueuedNode;
         head = QueuedNode;
         length++;
