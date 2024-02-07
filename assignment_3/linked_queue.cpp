@@ -76,10 +76,10 @@ int main() {
     cout << "dequeued node with value:" << Q.dequeue() << endl;
     cout << "dequeued node with value:" << Q.dequeue() << endl;
 
-    cout << "beginning tests\n";
+    cout << "\nbeginning tests\n";
 
     int test_outcome = test();
-    cout << test_outcome;
+    cout << "test outcomes: \n1-6 = error in step 1-6\n0 = no errors.\nresult: " << test_outcome;
 
     return 0;
 }
