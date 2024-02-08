@@ -26,5 +26,7 @@ public:
 
     int RemoveAtPos(int);
 
-    void LookAtPos(int);
+    int LookAtPos(int);
+
+    void printlist();
 };

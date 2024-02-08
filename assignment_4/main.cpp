@@ -32,7 +32,7 @@ void List::AddAtPos(int pos, int data){
     if(pos < 0){
         pos = 0;
     //if defined index is out of range of list length, append to end of list.
-    }else if(length < pos){
+    }else if(pos > length){
         //length is absolute, pos is zero-indexed. if length == pos there is no problem.
         pos = length;
     };
@@ -44,7 +44,7 @@ void List::AddAtPos(int pos, int data){
         newnode->index = 0;
         start = newnode;
         end = newnode;
-        length ++;
+        length++;
     //else if desired pos == length of list, we are only appending to end of List.
     }else if(pos == length){
             newnode->index = pos;
@@ -54,7 +54,24 @@ void List::AddAtPos(int pos, int data){
             length++;
     //else if we are just adding to the front
     }else if(pos == 0){
-        
+        //adjust all indices by +1
+        Node* current = start;
+        bool reached = false;
+        while(reached == false){
+            if(current == end){
+                reached = true;
+                current->index++;
+            }else{  
+                current->index++;
+                current = current->next;
+            };
+        };
+        newnode->index = pos;
+        newnode->next = start;
+        start->last = newnode;
+        start = newnode;
+        length++;
+    //otherwise proceed with general solution    
     }else{
         Node* current = end;
         bool reached = false;
@@ -74,4 +91,134 @@ void List::AddAtPos(int pos, int data){
         current->last = newnode;
         length++;
     };
+};
+
+//removes node at index and deletes it
+int List::RemoveAtPos(int pos){
+    int Data = 0;
+    //if index is not valid, output message 
+    if(pos < 0 || pos >= length){
+        cout << "not a valid index";
+    //else if there is only one item left in list/start and end are the same
+    }else if(length == 1){
+        Node* ToDel = start;
+        start = nullptr;
+        end = nullptr;
+        delete ToDel;
+        length--;
+    //else if we only want to remove node from end of list
+    }else if(pos == length - 1){
+        Data = end->data;
+        Node* ToDel = end;
+        end = end->last;
+        end->next = nullptr;
+        ToDel->last = nullptr;
+        delete ToDel;
+        length--;
+    //otherwise general solution will work
+    }else{
+        Node* current = start;
+        bool finished = false;
+        while(finished == false){
+            if(current->index == pos){
+                Data = current->data;
+                //if we are trying to remove start/first element
+                if(current->last == nullptr){
+                    current->next->last = nullptr;
+                    start = current->next;
+                }else{
+                    current->last->next = current->next;
+                    current->next->last = current->last;
+                }
+                length--;
+                Node* ToDel = current;
+                current = current->next;
+                delete ToDel;
+            }else if(current == end){
+                current->index--;
+                finished = true;
+            }else if(current->index > pos){
+                current->index--;
+                current = current->next;
+            }else{
+                current = current->next;
+            };
+        };
+    };
+    return Data;
+};
+
+//return value of data property from node at index without deleting node
+int List::LookAtPos(int pos){
+    int value;
+    //if index is in second half of list, search from end
+    if(pos < 0 || pos >= length){
+    cout << "not a valid index";
+    value = 0;
+    }else if(pos - 1 < length/2){
+        Node* current = end;
+        bool found = false;
+        while(found == false){
+            if(current->index == pos){
+                value = current->data;
+                found = true;
+            }else{
+                current = current->last;    
+            };
+        };
+    //otherwise if index is in first half, search from start
+    }else{
+        Node* current = start;
+        bool found = false;
+        while(found == false){
+            if(current->index == pos){
+                value = current->data;
+                found = true;
+            }else{
+                current = current->next;    
+            };
+        };
+    };
+    return value;
+};
+
+void List::printlist(){
+    Node* current = start;
+    bool done = false;
+    cout << "List length: " << length << endl;
+    while(done == false){
+        if(current == end){
+            done = true;
+        };
+        cout << "node index: " << current->index << endl << "node data: " << current->data << endl << endl;
+    };
+};
+
+int main(){
+    List* list_A = new List;
+
+
+    cout << "attempting to add node at index 0 with data 2\n";
+    list_A->AddAtPos(0, 2);
+    cout << "attempting to add node at index -1 with data 1\n";
+    list_A->AddAtPos(-1, 1);
+    cout << "attempting to add node at index 5 with data 3\n";
+    list_A->AddAtPos(5, 3);
+
+    cout << "current list status:\n";
+    list_A->printlist();
+
+    cout << "data at index 0" << list_A->LookAtPos(0) << endl;
+    cout << "data at index 1" << list_A->LookAtPos(1) << endl;
+    cout << "data at index 2" << list_A->LookAtPos(2) << endl;
+    cout << "data at index 3" << list_A->LookAtPos(3) << endl; //should return invalid index
+    cout << "data from attempted node removal at index 3" << list_A->RemoveAtPos(3) << endl; //should return invalid index
+    cout << "data from attempted node removal at index 2" <<list_A->RemoveAtPos(2) << endl; 
+    cout << "data from attempted node removal at index 0" <<list_A->RemoveAtPos(0) << endl;
+    cout << "data from attempted node removal at index 0" <<list_A->RemoveAtPos(0) << endl;
+
+    cout << "current list status:\n";
+    list_A->printlist();
+    
+    return 0;
 };
