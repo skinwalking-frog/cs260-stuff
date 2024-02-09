@@ -8,7 +8,7 @@ public:
     Node *last;
     int index;
 
-    Node(int D = 0);
+    Node(int);
 
     ~Node();
 };

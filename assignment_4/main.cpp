@@ -98,9 +98,10 @@ int List::RemoveAtPos(int pos){
     int Data = 0;
     //if index is not valid, output message 
     if(pos < 0 || pos >= length){
-        cout << "not a valid index";
+        cout << "not a valid index ";
     //else if there is only one item left in list/start and end are the same
     }else if(length == 1){
+        Data = start->data;
         Node* ToDel = start;
         start = nullptr;
         end = nullptr;
@@ -153,7 +154,7 @@ int List::LookAtPos(int pos){
     int value;
     //if index is in second half of list, search from end
     if(pos < 0 || pos >= length){
-    cout << "not a valid index";
+    cout << "not a valid index ";
     value = 0;
     }else if(pos - 1 < length/2){
         Node* current = end;
@@ -205,20 +206,20 @@ int main(){
     cout << "attempting to add node at index 5 with data 3\n";
     list_A->AddAtPos(5, 3);
 
-    cout << "current list status:\n";
-    list_A->printlist();
+    // cout << "current list status:\n";
+    // list_A->printlist();
 
-    cout << "data at index 0" << list_A->LookAtPos(0) << endl;
-    cout << "data at index 1" << list_A->LookAtPos(1) << endl;
-    cout << "data at index 2" << list_A->LookAtPos(2) << endl;
-    cout << "data at index 3" << list_A->LookAtPos(3) << endl; //should return invalid index
-    cout << "data from attempted node removal at index 3" << list_A->RemoveAtPos(3) << endl; //should return invalid index
-    cout << "data from attempted node removal at index 2" <<list_A->RemoveAtPos(2) << endl; 
-    cout << "data from attempted node removal at index 0" <<list_A->RemoveAtPos(0) << endl;
-    cout << "data from attempted node removal at index 0" <<list_A->RemoveAtPos(0) << endl;
+    cout << "data at index 0: " << list_A->LookAtPos(0) << endl;
+    cout << "data at index 1: " << list_A->LookAtPos(1) << endl;
+    cout << "data at index 2: " << list_A->LookAtPos(2) << endl;
+    cout << "data at index 3: " << list_A->LookAtPos(3) << endl; //should return invalid index
+    cout << "data from attempted node removal at index 3: " << list_A->RemoveAtPos(3) << endl; //should return invalid index
+    cout << "data from attempted node removal at index 2: " <<list_A->RemoveAtPos(2) << endl; 
+    cout << "data from attempted node removal at index 0: " <<list_A->RemoveAtPos(0) << endl;
+    cout << "data from attempted node removal at index 0: " <<list_A->RemoveAtPos(0) << endl;
 
-    cout << "current list status:\n";
-    list_A->printlist();
+    // cout << "current list status:\n";
+    // list_A->printlist();
     
     return 0;
 };
