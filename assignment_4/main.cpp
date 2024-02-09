@@ -184,14 +184,22 @@ int List::LookAtPos(int pos){
 };
 
 void List::printlist(){
-    Node* current = start;
-    bool done = false;
-    cout << "List length: " << length << endl;
-    while(done == false){
-        if(current == end){
-            done = true;
+    if(length > 0){
+        Node* current = start;
+        bool done = false;
+        cout << "List length: " << length << endl << "---------------" << endl;
+        while(done == false){
+            cout << "node index: " << current->index << endl << "node data: " 
+            << current->data << endl << "---------------" << endl;            
+            if(current == end){
+                done = true;
+            }else{
+                current = current->next;
+            };
+            
         };
-        cout << "node index: " << current->index << endl << "node data: " << current->data << endl << endl;
+    }else{
+        cout << "list is empty\n";
     };
 };
 
@@ -206,8 +214,8 @@ int main(){
     cout << "attempting to add node at index 5 with data 3\n";
     list_A->AddAtPos(5, 3);
 
-    // cout << "current list status:\n";
-    // list_A->printlist();
+    cout << "current list status:\n";
+    list_A->printlist();
 
     cout << "data at index 0: " << list_A->LookAtPos(0) << endl;
     cout << "data at index 1: " << list_A->LookAtPos(1) << endl;
@@ -218,8 +226,8 @@ int main(){
     cout << "data from attempted node removal at index 0: " <<list_A->RemoveAtPos(0) << endl;
     cout << "data from attempted node removal at index 0: " <<list_A->RemoveAtPos(0) << endl;
 
-    // cout << "current list status:\n";
-    // list_A->printlist();
+    cout << "current list status:\n";
+    list_A->printlist();
     
     return 0;
 };
