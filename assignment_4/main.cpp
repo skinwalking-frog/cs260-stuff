@@ -152,10 +152,10 @@ int List::RemoveAtPos(int pos){
 //return value of data property from node at index without deleting node
 int List::LookAtPos(int pos){
     int value;
-    //if index is in second half of list, search from end
     if(pos < 0 || pos >= length){
     cout << "not a valid index ";
     value = 0;
+    //if index in second half, search backwards from end
     }else if(pos - 1 < length/2){
         Node* current = end;
         bool found = false;
@@ -164,7 +164,7 @@ int List::LookAtPos(int pos){
                 value = current->data;
                 found = true;
             }else{
-                current = current->last;    
+                current = current->last;
             };
         };
     //otherwise if index is in first half, search from start
@@ -201,6 +201,12 @@ void List::printlist(){
     }else{
         cout << "list is empty\n";
     };
+};
+
+List::~List(){
+    for(int i = length; i < 1; i--){
+        RemoveAtPos(i - 1);
+    }
 };
 
 int main(){
