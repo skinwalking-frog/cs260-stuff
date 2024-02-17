@@ -7,7 +7,7 @@ using std::cout;
 //to test a destructor method.
 
 //figured it would be easier to report if something failed than if everything passed.
-int testnode(){
+int TestNode(){
     int result = 0;
     Node* node_A = new Node(5);
     if(node_A->data != 5 || node_A->index != -1 || node_A->next != nullptr || node_A->last != nullptr){
@@ -16,19 +16,9 @@ int testnode(){
     return result;
 };
 
-int testlist(){
-    int result = 0;
+bool TestListAdd(int test_list_len, int test_in_data, int test_in_pos) {
+    List* test_list = new List;
 
-    List* list = new List;
-
-    if(list->length != 0 || list->start != nullptr || list->end != nullptr){
-        result = 1;
-    };
-    list->AddAtPos(0, 1);
-    if(list->length != 1 || list->start != nullptr || list->end != nullptr){
-        result = 2;
-    };
+    test_list->AddAtPos(test_in_pos, test_in_data);
     
-
-    return result;
 }

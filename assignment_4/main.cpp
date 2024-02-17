@@ -204,7 +204,7 @@ void List::printlist(){
 };
 
 List::~List(){
-    for(int i = length; i < 1; i--){
+    for(int i = length; i > 0; i--){
         RemoveAtPos(i - 1);
     }
 };
@@ -212,12 +212,12 @@ List::~List(){
 int main(){
     List* list_A = new List;
 
-
+    //not really a test, more of a pseudo test to demonstrate that main can execute without error
     cout << "attempting to add node at index 0 with data 2\n";
     list_A->AddAtPos(0, 2);
-    cout << "attempting to add node at index -1 with data 1\n";
+    cout << "attempting to add node at index -1 with data 1\n"; //should add it infront of previous node, at corrected index 0
     list_A->AddAtPos(-1, 1);
-    cout << "attempting to add node at index 5 with data 3\n";
+    cout << "attempting to add node at index 5 with data 3\n";//shoukd add node to end of list with corrected index of 2.
     list_A->AddAtPos(5, 3);
 
     cout << "current list status:\n";
@@ -235,5 +235,7 @@ int main(){
     cout << "current list status:\n";
     list_A->printlist();
     
+    delete list_A;
+
     return 0;
 };
