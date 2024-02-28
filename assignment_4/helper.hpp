@@ -22,6 +22,8 @@ public:
 
     List();
 
+    ~List();
+
     void AddAtPos(int, int);
 
     int RemoveAtPos(int);
