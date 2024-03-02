@@ -1,3 +1,3 @@
-.vscode/settings.json
-.vscode/tasks.json
-assignment_4/a.exe
+*.json
+*.exe
+*.o
