@@ -4,18 +4,26 @@ class Node {
     
     public:
     
-    Node(int);
+    Node(int value);
     int data;
     Node* left;
     Node* right;
 };
 
 class BinaryTree {
-    Node* root;
 
-    Node* rec_parent_search(int, Node*);
+    Node* Add_parent_search(int search_value, Node* start);
+
+    Node* Find_replacement(int value, Node* start);
+
+    Node* Get_parent(int value, Node* start);
 
     public:
+
+    //needs to be public for recursive methods to work as implemented currently
+    Node* root;
+
+    BinaryTree();
 
     void Add(int);
 
@@ -23,5 +31,7 @@ class BinaryTree {
 
     bool Search(int, Node*);
 
-    void Display();
+    void Display_in_order(Node* start);
+
+    void Display_Tree(Node* start);
 };
