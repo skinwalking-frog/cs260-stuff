@@ -12,9 +12,29 @@ Node::Node(int value = 0){
     left = nullptr;
     right = nullptr;
 }
+
+//Node destructor
+Node::~Node(){
+    data = 0;
+}
+
 //BinaryTree constructor
 BinaryTree::BinaryTree(){
     root = nullptr;
+}
+
+BinaryTree::~BinaryTree(){
+    Delete_tree(root);
+}
+
+void BinaryTree::Delete_tree(Node* node){
+    if(node != nullptr){
+        Node* left = node->left;
+        Node* right = node->right;
+        delete node;
+        Delete_tree(left);
+        Delete_tree(right);
+    }
 }
 
 //searches everything from input node down, start at root node to search whole tree
@@ -58,14 +78,12 @@ Node* BinaryTree::Add_parent_search(int search_value, Node* start){
 //private method to get the parent node of the first node with matching value below start node
 Node* BinaryTree::Get_parent(int value, Node* start){
     Node* return_val = nullptr;
-    if(Search(value, start) == true){
-        if(start->left->data == value || start->right->data == value){
-            return_val = start;
-        }else if(value < start->data){
-            return_val = Get_parent(value, start->left);
-        }else{
-            return_val = Get_parent(value, start->right);
-        }
+    if(start->left->data == value || start->right->data == value){
+        return_val = start;
+    }else if(value < start->data){
+        return_val = Get_parent(value, start->left);
+    }else{
+        return_val = Get_parent(value, start->right);
     }
     return return_val;
 }
@@ -123,31 +141,46 @@ void BinaryTree::Remove(int value){
             break;
         }
     }
-    if(found == true){}
-    Node* first_left = node_to_del->left;
-    Node* first_right = node_to_del->right;
-    Node* option_A = Find_replacement(value, first_left);
-    Node* option_B = Find_replacement(value, first_right);
-    //if option_A is closer to the original value than option_B, or if of equal distance
-    if((value - option_A->data) <= (option_B->data - value)){
-        //PARENT OF OPTION A NEEDS SET LEFT/RIGHT TO NULLPTR
-        option_A->left = first_left;
-        option_A->right = first_right;
-        //needs parent left or right = option_A
-        if(parent->left == node_to_del){
-            parent->left = option_A;
-        }else if(parent->right == node_to_del){
-            parent->right = option_A;
+    if(found == true){
+        //set variables for node directly left and right of node we want to delete
+        Node* first_left = node_to_del->left;
+        Node* first_right = node_to_del->right;
+        //find replacement options from right and left
+        Node* option_A = Find_replacement(value, first_left);
+        Node* option_B = Find_replacement(value, first_right);
+        //if option_A is closer to the original value than option_B, or if of equal distance
+        if((value - option_A->data) <= (option_B->data - value)){
+            //get the parent of the option we pick starting at the node to delete
+            Node* option_parent = Get_parent(option_A->data, node_to_del);
+            //since we are using option_A it will be the child on the right of the parent
+            option_parent->right = nullptr;
+            option_A->left = first_left;
+            option_A->right = first_right;
+            //parent left or right = option_A
+            if(parent->left == node_to_del){
+                parent->left = option_A;
+            }else if(parent->right == node_to_del){
+                parent->right = option_A;
+            }
+            delete node_to_del;
+
+        //else option_B is closer to the original value   
+        }else{
+            //get the parent of the option we pick starting at the node to delete
+            Node* option_parent = Get_parent(option_B->data, node_to_del);
+            //since we are using option_B it will be the child on the left of the parent
+            option_parent->left = nullptr;
+            option_B->left = first_left;
+            option_B->right = first_right;
+            //parent left or right = option_B
+            if(parent->left == node_to_del){
+                parent->left = option_B;
+            }else if(parent->right == node_to_del){
+                parent->right = option_B;
+            }
+            delete node_to_del;
         }
-
-
-
-    //else option_B is closer to the original value   
-    }else{
-
     }
-    
-
 }
 
 //print values of tree in order of smallest to largest from starting node chosen

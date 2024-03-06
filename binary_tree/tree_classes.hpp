@@ -8,6 +8,8 @@ class Node {
     int data;
     Node* left;
     Node* right;
+
+    ~Node();
 };
 
 class BinaryTree {
@@ -18,12 +20,16 @@ class BinaryTree {
 
     Node* Get_parent(int value, Node* start);
 
+    void Delete_tree(Node* node);
+
     public:
 
     //needs to be public for recursive methods to work as implemented currently
     Node* root;
 
     BinaryTree();
+
+    ~BinaryTree();
 
     void Add(int);
 
