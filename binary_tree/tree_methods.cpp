@@ -93,15 +93,32 @@ Node* BinaryTree::Get_parent(int value, Node* start){
 //value should be the data of the node we are finding a replacement for
 Node* BinaryTree::Find_replacement(int value, Node* start){
     Node* return_val = nullptr;
-    //needs condition for if null
-    if(value < start->data && start->left != nullptr)
-        return_val = Find_replacement(value, start->left);
-    else if(value > start->data && start->right != nullptr){
-        return_val = Find_replacement(value, start->right);
+    // cout << "start " << start << endl;
+    // if(start != nullptr){
+    //     cout << "start->data " << start->data << endl;
+    // }
+    if(start == nullptr){
+        return_val = nullptr;
     }else{
-        return_val = start;
+        if(start->data > value){
+            return_val = Find_replacement(value, start->left);
+            if(return_val == nullptr){
+                return_val = start;
+            }
+        }else if(start->data < value){
+            return_val = Find_replacement(value, start->right);
+            if(return_val == nullptr){
+                return_val = start;
+            }
+        }else{
+            return_val = start;
+        }
     }
-    
+    // cout << "return_val " << return_val << endl;
+    // if(return_val != nullptr){
+    //     cout << "return_val->data " << return_val->data << endl;
+    // }
+
     return return_val;
 }
 
@@ -143,58 +160,60 @@ void BinaryTree::Remove(int value){
         }
     }
 
-
-
     if(found == true){
+        // cout << node_to_del->data << endl;
+        // cout << parent->data << endl;
         //set variables for node directly left and right of node we want to delete
         Node* first_left = node_to_del->left;
         Node* first_right = node_to_del->right;
-
-        cout << "found data: " << node_to_del->data << endl;
-        
-        if(first_left != nullptr){  
-            cout << "first L data: " << first_left->data << endl;
-            cout << "first L: " << first_left << endl;
-            // cout << "first L R: " << first_left->right << endl;
-        }
-        if(first_right != nullptr){
-            cout << "first R data: " << first_right->data << endl; 
-            cout << "first R: " << first_right << endl;      
-            // cout << "First R L: " << first_right->left << endl;
-        }
-
         Node* option_A = nullptr;
         Node* option_B = nullptr;
 
+        // cout << "found data: " << node_to_del->data << endl;
+        
+        // if(first_left != nullptr){  
+        //     cout << "first L data: " << first_left->data << endl;
+        //     cout << "first L: " << first_left << endl;
+        //     // cout << "first L R: " << first_left->right << endl;
+        // }
+        // if(first_right != nullptr){
+        //     cout << "first R data: " << first_right->data << endl; 
+        //     cout << "first R: " << first_right << endl;      
+        //     // cout << "First R L: " << first_right->left << endl;
+        // }
+
         //find replacement options from right and left if they exist
         if(first_left != nullptr){
-            Node* option_A = Find_replacement(value, first_left);
+            option_A = Find_replacement(value, first_left);
+            // cout << "option A found\n";
         }
         if(first_right != nullptr){
-            Node* option_B = Find_replacement(value, first_right);
+            option_B = Find_replacement(value, first_right);
+            // cout << "option B found\n";
         }
 
-        if(option_A != nullptr){
-        cout << "option A" << option_A->data << endl;
-        }else{
-            cout << "option A is null";
-        }
-        if(option_B != nullptr){
-        cout << "option B" << option_B->data << endl;
-        }else{ 
-            cout <<"option B is null";
-        }
+        // if(option_A != nullptr){
+        // cout << "option A" << option_A->data << endl;
+        // }else{
+        //     cout << "option A is null" << endl;
+        // }
+        // if(option_B != nullptr){
+        // cout << "option B" << option_B->data << endl;
+        // }else{ 
+        //     cout <<"option B is null" << endl;
+        // }
 
         //if option_A is closer to the original value than option_B, or if of equal distance
-        if(option_A != nullptr && (option_B != nullptr && ((value - option_A->data) <= (option_B->data - value)) || option_B == nullptr)){
-            cout << "option A taken";
+        if(option_A != nullptr && (option_B != nullptr && ((value - option_A->data) < (option_B->data - value)) || option_B == nullptr)){
+            // cout << "option A taken\n";
             
             //get the parent of the option we pick starting at the node to delete
             Node* option_parent = Get_parent(option_A->data, node_to_del);
             
+            // cout << "option parent " << option_parent->data << endl;
             //set replacement option's parent's child to nullptr
             if(option_parent->left == option_A){
-                option_parent->left == nullptr;
+                option_parent->left = nullptr;
             }else if(option_parent->right == option_A){
                 option_parent->right = nullptr;
             }
@@ -215,14 +234,14 @@ void BinaryTree::Remove(int value){
 
         //else option_B is closer to the original value   
         }else if(option_B != nullptr && (option_A != nullptr && ((value - option_A->data) >= (option_B->data - value)) || option_A == nullptr)){
-            cout << "option B taken";
+            // cout << "option B taken\n";
            
             //get the parent of the option we pick starting at the node to delete
             Node* option_parent = Get_parent(option_B->data, node_to_del);
 
             //set replacement option's parent's child to nullptr
             if(option_parent->left == option_B){
-                option_parent->left == nullptr;
+                option_parent->left = nullptr;
             }else if(option_parent->right == option_B){
                 option_parent->right = nullptr;
             }
@@ -287,5 +306,3 @@ void BinaryTree::Display_Tree(Node* start){
             cout << endl;
         }
     }
-    
-}
