@@ -20,5 +20,21 @@ int main(){
     cout << "top-bottom\n";
     tree.Display_Tree(tree.root);
 
+    cout << "attempting to remove 8\n";
+    tree.Remove(8);
+
+    cout << "in order\n";
+    tree.Display_in_order(tree.root);
+    cout << "top-bottom\n";
+    tree.Display_Tree(tree.root);
+
+    cout <<"attempting to remove 3\n";
+    tree.Remove(3);
+    
+    cout << "in order\n";
+    tree.Display_in_order(tree.root);
+    cout << "top-bottom\n";
+    tree.Display_Tree(tree.root);
+
     return 0;
 }

@@ -93,6 +93,7 @@ Node* BinaryTree::Get_parent(int value, Node* start){
 //value should be the data of the node we are finding a replacement for
 Node* BinaryTree::Find_replacement(int value, Node* start){
     Node* return_val = nullptr;
+    //needs condition for if null
     if(value < start->data && start->left != nullptr)
         return_val = Find_replacement(value, start->left);
     else if(value > start->data && start->right != nullptr){
@@ -100,7 +101,7 @@ Node* BinaryTree::Find_replacement(int value, Node* start){
     }else{
         return_val = start;
     }
-
+    
     return return_val;
 }
 
@@ -118,7 +119,7 @@ void BinaryTree::Add(int new_value){
     };  
 }
 
-void BinaryTree::Remove(int value){
+void BinaryTree::Remove(int value){    
     Node* node_to_del = nullptr;
     Node* parent = root;
     Node* current = root;
@@ -141,42 +142,108 @@ void BinaryTree::Remove(int value){
             break;
         }
     }
+
+
+
     if(found == true){
         //set variables for node directly left and right of node we want to delete
         Node* first_left = node_to_del->left;
         Node* first_right = node_to_del->right;
-        //find replacement options from right and left
-        Node* option_A = Find_replacement(value, first_left);
-        Node* option_B = Find_replacement(value, first_right);
+
+        cout << "found data: " << node_to_del->data << endl;
+        
+        if(first_left != nullptr){  
+            cout << "first L data: " << first_left->data << endl;
+            cout << "first L: " << first_left << endl;
+            // cout << "first L R: " << first_left->right << endl;
+        }
+        if(first_right != nullptr){
+            cout << "first R data: " << first_right->data << endl; 
+            cout << "first R: " << first_right << endl;      
+            // cout << "First R L: " << first_right->left << endl;
+        }
+
+        Node* option_A = nullptr;
+        Node* option_B = nullptr;
+
+        //find replacement options from right and left if they exist
+        if(first_left != nullptr){
+            Node* option_A = Find_replacement(value, first_left);
+        }
+        if(first_right != nullptr){
+            Node* option_B = Find_replacement(value, first_right);
+        }
+
+        if(option_A != nullptr){
+        cout << "option A" << option_A->data << endl;
+        }else{
+            cout << "option A is null";
+        }
+        if(option_B != nullptr){
+        cout << "option B" << option_B->data << endl;
+        }else{ 
+            cout <<"option B is null";
+        }
+
         //if option_A is closer to the original value than option_B, or if of equal distance
-        if((value - option_A->data) <= (option_B->data - value)){
+        if(option_A != nullptr && (option_B != nullptr && ((value - option_A->data) <= (option_B->data - value)) || option_B == nullptr)){
+            cout << "option A taken";
+            
             //get the parent of the option we pick starting at the node to delete
             Node* option_parent = Get_parent(option_A->data, node_to_del);
-            //since we are using option_A it will be the child on the right of the parent
-            option_parent->right = nullptr;
-            option_A->left = first_left;
-            option_A->right = first_right;
-            //parent left or right = option_A
+            
+            //set replacement option's parent's child to nullptr
+            if(option_parent->left == option_A){
+                option_parent->left == nullptr;
+            }else if(option_parent->right == option_A){
+                option_parent->right = nullptr;
+            }
+            
+            //set replacement options children to node to delete's children (if option is immediate child of node to delete, )
+            option_A->left = node_to_del->left;
+            option_A->right = node_to_del->right;
+
+            //replace the node we want to delete with the replacement option
             if(parent->left == node_to_del){
                 parent->left = option_A;
             }else if(parent->right == node_to_del){
                 parent->right = option_A;
             }
+        
             delete node_to_del;
+        
 
         //else option_B is closer to the original value   
-        }else{
+        }else if(option_B != nullptr && (option_A != nullptr && ((value - option_A->data) >= (option_B->data - value)) || option_A == nullptr)){
+            cout << "option B taken";
+           
             //get the parent of the option we pick starting at the node to delete
             Node* option_parent = Get_parent(option_B->data, node_to_del);
-            //since we are using option_B it will be the child on the left of the parent
-            option_parent->left = nullptr;
-            option_B->left = first_left;
-            option_B->right = first_right;
-            //parent left or right = option_B
+
+            //set replacement option's parent's child to nullptr
+            if(option_parent->left == option_B){
+                option_parent->left == nullptr;
+            }else if(option_parent->right == option_B){
+                option_parent->right = nullptr;
+            }
+            
+            //set replacement options children to node to delete's children (if option is immediate child of node to delete, )
+            option_B->left = node_to_del->left;
+            option_B->right = node_to_del->right;
+
+            //replace the node we want to delete with the replacement option
             if(parent->left == node_to_del){
                 parent->left = option_B;
             }else if(parent->right == node_to_del){
                 parent->right = option_B;
+            }
+
+            delete node_to_del;
+        }else{
+            if(parent->left == node_to_del){
+                parent->left = nullptr;
+            }else if(parent->right == node_to_del){
+                parent->right = nullptr;
             }
             delete node_to_del;
         }
