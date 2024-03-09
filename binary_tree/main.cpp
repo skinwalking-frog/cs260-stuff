@@ -15,6 +15,9 @@ int main(){
     tree.Add(6);
     tree.Add(8);
 
+    cout << "does tree contain 4? " << tree.Search(4, tree.root) << endl;
+    cout << "does tree contain 10? " << tree.Search(10, tree.root) << endl;
+
     cout << "in order\n";
     tree.Display_in_order(tree.root);
     cout << "top-bottom\n";
@@ -31,6 +34,14 @@ int main(){
     cout <<"attempting to remove 3\n";
     tree.Remove(3);
     
+    cout << "in order\n";
+    tree.Display_in_order(tree.root);
+    cout << "top-bottom\n";
+    tree.Display_Tree(tree.root);
+
+    cout << "attempting to remove 5\n";
+    tree.Remove(5); 
+
     cout << "in order\n";
     tree.Display_in_order(tree.root);
     cout << "top-bottom\n";

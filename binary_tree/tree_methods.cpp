@@ -203,7 +203,7 @@ void BinaryTree::Remove(int value){
         //     cout <<"option B is null" << endl;
         // }
 
-        //if option_A is closer to the original value than option_B, or if of equal distance
+        //if option_A is closer to the original value than option_B
         if(option_A != nullptr && (option_B != nullptr && ((value - option_A->data) < (option_B->data - value)) || option_B == nullptr)){
             // cout << "option A taken\n";
             
@@ -211,14 +211,14 @@ void BinaryTree::Remove(int value){
             Node* option_parent = Get_parent(option_A->data, node_to_del);
             
             // cout << "option parent " << option_parent->data << endl;
-            //set replacement option's parent's child to nullptr
+            //set replacement option's parent's left/right to nullptr
             if(option_parent->left == option_A){
                 option_parent->left = nullptr;
             }else if(option_parent->right == option_A){
                 option_parent->right = nullptr;
             }
             
-            //set replacement options children to node to delete's children (if option is immediate child of node to delete, )
+            //set replacement options children to node to delete's children (if option is immediate child of node to delete, already hadled by logic above)
             option_A->left = node_to_del->left;
             option_A->right = node_to_del->right;
 
@@ -227,6 +227,8 @@ void BinaryTree::Remove(int value){
                 parent->left = option_A;
             }else if(parent->right == node_to_del){
                 parent->right = option_A;
+            }else if(root == node_to_del){
+                root = option_A;
             }
         
             delete node_to_del;
@@ -239,14 +241,14 @@ void BinaryTree::Remove(int value){
             //get the parent of the option we pick starting at the node to delete
             Node* option_parent = Get_parent(option_B->data, node_to_del);
 
-            //set replacement option's parent's child to nullptr
+            //set replacement option's parent's left/right to nullptr
             if(option_parent->left == option_B){
                 option_parent->left = nullptr;
             }else if(option_parent->right == option_B){
                 option_parent->right = nullptr;
             }
             
-            //set replacement options children to node to delete's children (if option is immediate child of node to delete, )
+            //set replacement options children to node to delete's children (if option is immediate child of node to delete, already hadled by logic above)
             option_B->left = node_to_del->left;
             option_B->right = node_to_del->right;
 
@@ -255,6 +257,8 @@ void BinaryTree::Remove(int value){
                 parent->left = option_B;
             }else if(parent->right == node_to_del){
                 parent->right = option_B;
+            }else if(root == node_to_del){
+                root = option_B;
             }
 
             delete node_to_del;
@@ -306,3 +310,4 @@ void BinaryTree::Display_Tree(Node* start){
             cout << endl;
         }
     }
+}
