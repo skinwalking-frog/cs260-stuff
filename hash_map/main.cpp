@@ -20,6 +20,11 @@ int main(){
     table->insert(james, 5);
 
     cout << table->get("bob") << " is the value of bob\n";
+    cout << table->get("joe") << " is the value of joe\n";
+    cout << table->get("phill") << " is the value of phill\n";
+    cout << table->get("nick") << " is the value of nick\n";
+    cout << table->get("james") << " is the value of james\n";
+    cout << endl;
 
     table->debug_array();
     return 0;
