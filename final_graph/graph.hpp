@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 class Node {
     private:
@@ -41,7 +42,7 @@ class Graph {
     Node *AddNode(int);
     Edge *AddEdge(int, Node *, Node *);
     bool IsConnected();
-
+    void print();
 };
 
 class Graph::MST {
@@ -57,15 +58,24 @@ class Graph::MST {
 
     bool CompareEdgeWeights(Edge *, Edge *);
     void MSTFromGraph(const std::vector<Node*>&, const std::vector<Edge*>&);
+    void print();
 };
 
 class Graph::ShortPath {
     private:
 
     public:
-    std::vector<Node *> previous;
-    std::vector<Node *> distance;
+    bool initialized;
+
+    std::vector<Node *> Q;
+    std::vector<Node *> visited;
+    std::vector<Node *> unvisited;
+    std::map<Node *, Node *> previous;
+    std::map<Node*, int> distance;
 
     ShortPath();
-    void dijskras(Node *);
+    ~ShortPath();
+    void dijkstras(Node *, const std::vector<Node*>&, const std::vector<Edge*>&);
+    void print();
 };
+

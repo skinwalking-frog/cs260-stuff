@@ -2,6 +2,7 @@
 #include <vector>
 #include <algorithm>
 #include "graph.hpp"
+#include <limits>
 
 //NEED TO ADD DESTRUCTORS FOR ALL CLASSES
 
@@ -46,6 +47,11 @@ bool Graph::IsConnected(){
     return retval;
 }
 
+void Graph::print(){
+
+}
+
+
 Graph::MST::MST(){
     intialized = false;
 }
@@ -55,6 +61,14 @@ bool Graph::MST::CompareEdgeWeights(Edge * A, Edge *B){
 }
 
 void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
+    std::vector<Node *> cleaned_nodes = parent_nodes;
+    for(int i = 0; i < parent_nodes.size(); i++){
+        if(cleaned_nodes[i]->adjacent.size() < 1){
+            cleaned_nodes.erase(cleaned_nodes.begin() + i);
+            i--;
+        }
+    }
+
     //make a copy of parent edges to sort by weight
     std::vector<Edge *> sorted_edges = parent_edges;
     //sort the edges from smallest to largest by weight
@@ -62,7 +76,7 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
 
     int edge_index = 0;
     //while we have not included all nodes in the MST
-    while (MST_nodes.size() < parent_nodes.size()){
+    while (MST_nodes.size() < cleaned_nodes.size()){
         //add the next edge
         MST_edges.push_back(sorted_edges[edge_index]);
         //if the A side node from edge hasnt already been included add it
@@ -87,6 +101,50 @@ Graph::ShortPath::ShortPath(){
 
 }
 
-void Graph::ShortPath::dijskras(Node * source){
+void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
+    //remove node that have no edges attached from algorithm input
+    std::vector<Node *> cleaned_nodes = parent_nodes;
+    for(int i = 0; i < parent_nodes.size(); i++){
+        if(cleaned_nodes[i]->adjacent.size() < 1){
+            cleaned_nodes.erase(cleaned_nodes.begin() + i);
+            i--;
+        }
+    }
+
+    unvisited = cleaned_nodes;
     
+    for(int n = 0; n < cleaned_nodes.size(); n++){
+        previous.insert_or_assign(cleaned_nodes[n], nullptr); 
+    }
+
+    for(int n = 0; n < cleaned_nodes.size(); n++){
+        distance.insert_or_assign(cleaned_nodes[n], INT_MAX); 
+    }
+    Node * last_visited = nullptr;
+    Node * current = source;
+    distance.at(current) = 0;
+    Q.push_back(current);
+    while (Q.size() > 0){
+
+        Edge *smallest = nullptr; 
+        int last_weight = INT_MAX;
+
+        for(int i = 0; i < current->adjacent.size(); i++){
+            if(current->adjacent[i]->weight < last_weight){
+                last_weight = current->adjacent[i]->weight;
+                smallest = current->adjacent[i];
+            }
+        }
+
+        if(distance.at(current) + smallest->weight < distance.at(smallest->end_B)){
+            distance.at(smallest->end_B) = distance.at(current) + smallest->weight;
+        }
+        
+            
+        visited.push_back(current);
+        auto qindex = std::find(Q.begin(), Q.end(), current);
+        Q.erase(qindex);
+
+    }
+
 }
