@@ -83,18 +83,20 @@ void Graph::print(){
 
 Graph::MST::MST(){
     initialized = false;
-    MST_edges;
+    MST_edges; //interacting with these vectors in any way causes a seg fault
     MST_nodes;
 }
 
 void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
     //on every run reset the spanning tree contents to nothing
-    if(MST_nodes.empty()==false && MST_edges.empty()==false){
-        MST_nodes.clear();
-        MST_edges.clear();
-    }else{
-        std::cout << "initializing new MST\n";
-    }
+
+    //####for some unknown reason running the code commented out below causes a seg fault####
+    // if(MST_nodes.empty() == false && MST_edges.empty() == false){
+    //     MST_nodes.clear();
+    //     MST_edges.clear();
+    // }else{
+    //     std::cout << "initializing new MST\n";
+    // }
 
     std::cout << "MST code mark 1\n";
     
