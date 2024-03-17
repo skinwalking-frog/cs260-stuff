@@ -1,5 +1,7 @@
 #include <iostream>
 #include "graph.hpp"
+#include <limits>
+#include <algorithm>
 //create the graph form the wikipedia page for dijkstras algorithm
 int main(){
     Graph * graph = new Graph;
@@ -13,14 +15,14 @@ int main(){
 
     //create edges
     Edge * edge1 = graph->AddEdge(7, node1, node2);
-    Edge * edge1 = graph->AddEdge(9, node1, node3);
-    Edge * edge1 = graph->AddEdge(14, node1, node6);
-    Edge * edge1 = graph->AddEdge(10, node2, node3);
-    Edge * edge1 = graph->AddEdge(15, node2, node4);
-    Edge * edge1 = graph->AddEdge(2, node3, node6);
-    Edge * edge1 = graph->AddEdge(11, node3, node4);
-    Edge * edge1 = graph->AddEdge(6, node4, node5);
-    Edge * edge1 = graph->AddEdge(9, node5, node6);
+    Edge * edge2 = graph->AddEdge(9, node1, node3);
+    Edge * edge3 = graph->AddEdge(14, node1, node6);
+    Edge * edge4 = graph->AddEdge(10, node2, node3);
+    Edge * edge5 = graph->AddEdge(15, node2, node4);
+    Edge * edge6 = graph->AddEdge(2, node3, node6);
+    Edge * edge7 = graph->AddEdge(11, node3, node4);
+    Edge * edge8 = graph->AddEdge(6, node4, node5);
+    Edge * edge9 = graph->AddEdge(9, node5, node6);
     
     //print graph
     graph->print();
@@ -36,6 +38,8 @@ int main(){
 
     //print dijkstra
     graph->Dijkstra->print(graph->graph_nodes);
+    
+    std::cout << "MAIN code mark 1\n";
 
     return 0;
 }

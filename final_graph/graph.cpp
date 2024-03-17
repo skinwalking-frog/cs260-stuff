@@ -1,11 +1,19 @@
 #include <iostream>
-#include <vector>
-#include <queue>
+// #include <vector>
+// #include <queue>
 #include <algorithm>
 #include "graph.hpp"
 #include <limits>
+#include <functional>
+#include <memory>
 
 //NEED TO ADD DESTRUCTORS FOR ALL CLASSES
+
+struct CompareEdgeWeights{
+    bool operator()(const Edge* lhs, const Edge* rhs) const {
+        return lhs->weight > rhs->weight;
+    }
+};
 
 Node::Node(){
     data = -1;
@@ -22,8 +30,8 @@ Edge::Edge(){
 Graph::Graph(){
     edge_ID_count = 0;
     node_ID_count = 0;
-    MST * MinSpanTree = new MST;
-    ShortPath * Dijkstra = new ShortPath;
+    Graph::MST * MinSpanTree = new Graph::MST;
+    Graph::ShortPath * Dijkstra = new Graph::ShortPath;
 }
 
 Node *Graph::AddNode(int data){
@@ -51,13 +59,15 @@ Edge *Graph::AddEdge(int weight, Node * start, Node * end){
 bool Graph::IsConnected(){
     bool retval = true;
     for(int i = 0; i < graph_nodes.size(); i++){
-        if(graph_nodes[i]->adjacent.size() < 1);
+        if(graph_nodes[i]->adjacent.size() < 1){
             retval = false;
+        }
     }   
     return retval;
 }
 
 void Graph::print(){
+    std::cout << "Graph\n";
     std::cout << "Nodes:\n";
     for(int i = 0; i < graph_nodes.size(); i++){
         std::cout << "node index: " << graph_nodes[i]->ID << " Data: " << graph_nodes[i]->data << std::endl;
@@ -72,30 +82,40 @@ void Graph::print(){
 
 
 Graph::MST::MST(){
-    intialized = false;
-}
-
-bool Graph::MST::CompareEdgeWeights(Edge * A, Edge *B){
-    return (A->weight < B->weight);
+    initialized = false;
+    MST_edges;
+    MST_nodes;
 }
 
 void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
     //on every run reset the spanning tree contents to nothing
-    MST_nodes.erase(MST_nodes.begin(), MST_nodes.end());
-    MST_edges.erase(MST_edges.begin(), MST_edges.end());
+    if(MST_nodes.empty()==false && MST_edges.empty()==false){
+        MST_nodes.clear();
+        MST_edges.clear();
+    }else{
+        std::cout << "initializing new MST\n";
+    }
 
+    std::cout << "MST code mark 1\n";
+    
     std::vector<Node *> cleaned_nodes = parent_nodes;
-    for(int i = 0; i < parent_nodes.size(); i++){
+    int total_nodes = parent_nodes.size();
+    
+    for(int i = 0; i < total_nodes; i++){
         if(cleaned_nodes[i]->adjacent.size() < 1){
             cleaned_nodes.erase(cleaned_nodes.begin() + i);
             i--;
         }
     }
 
+    std::cout << "MST code mark 2\n";
+
     //make a copy of parent edges to sort by weight
     std::vector<Edge *> sorted_edges = parent_edges;
     //sort the edges from smallest to largest by weight
-    std::sort(sorted_edges.begin(), sorted_edges.end(), CompareEdgeWeights);
+    std::sort(sorted_edges.begin(), sorted_edges.end(), CompareEdgeWeights());
+
+    std::cout << "MST code mark 3\n";
 
     int edge_index = 0;
     //while we have not included all nodes in the MST
@@ -117,10 +137,12 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
 
         edge_index++;
     }
-    intialized = true;
+    initialized = true;
+    std::cout << "MST code ran\n";
 };
 
 void Graph::MST::print(){
+    std::cout << "MST\n";
     std::cout << "Nodes:\n";
     for(int i = 0; i < MST_nodes.size(); i++){
         std::cout << "node index: " << MST_nodes[i]->ID << " Data: " << MST_nodes[i]->data << std::endl;
@@ -134,10 +156,6 @@ void Graph::MST::print(){
 
 Graph::ShortPath::ShortPath(){
     initialized = false;
-}
-
-bool Graph::ShortPath::CompareEdgeWeights(Edge * A, Edge *B){
-    return (A->weight < B->weight);
 }
 
 void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
@@ -164,7 +182,7 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
     std::vector<Node *> visited_nodes;
 
     //IDK what the second half of this line really does, but Chat GPT said it would work ¯\_(ツ)_/¯
-    std::priority_queue<Edge *, std::vector<Edge *>, decltype(&CompareEdgeWeights)> Q(CompareEdgeWeights);
+    std::priority_queue<Edge *, std::vector<Edge *>, CompareEdgeWeights> Q;
     
     distance.at(source) = 0;
     //add all atached edges from source to priority queue
@@ -274,6 +292,10 @@ void Graph::ShortPath::print(std::vector<Node *> total_nodes){
     
     std::cout << "table of previous: \n";
     for(int k = 0; k < cleaned_nodes.size(); k++){
-        std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: " << previous.at(cleaned_nodes[k])->ID << std::endl;
+        if(cleaned_nodes[k] != nullptr){
+            std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: " << previous.at(cleaned_nodes[k])->ID << std::endl;
+        }else{
+            std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: Nullptr" << std::endl;
+        }
     }
 }

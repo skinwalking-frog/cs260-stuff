@@ -3,6 +3,8 @@
 #include <map>
 #include <queue>
 
+class Edge;
+
 class Node {
     private:
 
@@ -56,14 +58,14 @@ class Graph::MST {
     private:
 
     public:
-    bool intialized;
+    bool initialized;
     std::vector<Node *> MST_nodes;
     std::vector<Edge *> MST_edges;
 
     MST();
     ~MST();
 
-    bool CompareEdgeWeights(Edge *, Edge *);
+    // bool CompareEdgeWeights(Edge *, Edge *);
     void MSTFromGraph(const std::vector<Node*>&, const std::vector<Edge*>&);
     void print();
 };
@@ -73,8 +75,6 @@ class Graph::ShortPath {
 
     public:
     bool initialized;
-
-    bool CompareEdgeWeights(Edge * A, Edge *B);
     
     std::map<Node *, Node *> previous;
     std::map<Node*, int> distance;
