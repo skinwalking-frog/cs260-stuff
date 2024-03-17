@@ -1,12 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <queue>
 
 class Node {
     private:
 
     public:
     int data;
+    int ID;
     std::vector<Edge *> adjacent;
 
     Node();
@@ -17,6 +19,7 @@ class Edge {
     private:
 
     public:
+    int ID;
     int weight;
     Node *end_A;
     Node *end_B;
@@ -32,7 +35,11 @@ class Graph {
     class MST;
     class ShortPath;
 
-    bool empty;
+    MST * MinSpanTree;
+    ShortPath * Dijkstra;
+
+    int edge_ID_count;
+    int node_ID_count;
 
     std::vector<Node *> graph_nodes;
     std::vector<Edge *> graph_edges;
@@ -67,15 +74,14 @@ class Graph::ShortPath {
     public:
     bool initialized;
 
-    std::vector<Node *> Q;
-    std::vector<Node *> visited;
-    std::vector<Node *> unvisited;
+    bool CompareEdgeWeights(Edge * A, Edge *B);
+    
     std::map<Node *, Node *> previous;
     std::map<Node*, int> distance;
 
     ShortPath();
     ~ShortPath();
     void dijkstras(Node *, const std::vector<Node*>&, const std::vector<Edge*>&);
-    void print();
+    void print(std::vector<Node *> );
 };
 

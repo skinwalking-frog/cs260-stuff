@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 #include <algorithm>
 #include "graph.hpp"
 #include <limits>
@@ -8,21 +9,28 @@
 
 Node::Node(){
     data = -1;
+    ID = -1;
 }
 
 Edge::Edge(){
     weight = 0;
+    ID = -1;
     end_A = nullptr;
     end_B = nullptr;
 }
 
 Graph::Graph(){
-    empty = true;
+    edge_ID_count = 0;
+    node_ID_count = 0;
+    MST * MinSpanTree = new MST;
+    ShortPath * Dijkstra = new ShortPath;
 }
 
 Node *Graph::AddNode(int data){
     Node *new_node = new Node;
     new_node->data = data;
+    new_node->ID = node_ID_count;
+    node_ID_count++;
     graph_nodes.push_back(new_node);
     return new_node;
 }
@@ -34,6 +42,8 @@ Edge *Graph::AddEdge(int weight, Node * start, Node * end){
     start->adjacent.push_back(new_edge);
     new_edge->end_B = end;
     end->adjacent.push_back(new_edge);
+    new_edge->ID = edge_ID_count;
+    edge_ID_count++;
     graph_edges.push_back(new_edge);
     return new_edge;
 }
@@ -48,6 +58,15 @@ bool Graph::IsConnected(){
 }
 
 void Graph::print(){
+    std::cout << "Nodes:\n";
+    for(int i = 0; i < graph_nodes.size(); i++){
+        std::cout << "node index: " << graph_nodes[i]->ID << " Data: " << graph_nodes[i]->data << std::endl;
+    }
+
+    std::cout << "edges:\n";
+    for(int k = 0; k < graph_edges.size(); k++){
+        std::cout << "Edge index: " << graph_edges[k]->ID << " node at end_A: " << graph_edges[k]->end_A->ID << " node at end_B: " << graph_edges[k]->end_B->ID << std::endl;
+    }
 
 }
 
@@ -61,6 +80,10 @@ bool Graph::MST::CompareEdgeWeights(Edge * A, Edge *B){
 }
 
 void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
+    //on every run reset the spanning tree contents to nothing
+    MST_nodes.erase(MST_nodes.begin(), MST_nodes.end());
+    MST_edges.erase(MST_edges.begin(), MST_edges.end());
+
     std::vector<Node *> cleaned_nodes = parent_nodes;
     for(int i = 0; i < parent_nodes.size(); i++){
         if(cleaned_nodes[i]->adjacent.size() < 1){
@@ -97,12 +120,28 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
     intialized = true;
 };
 
-Graph::ShortPath::ShortPath(){
+void Graph::MST::print(){
+    std::cout << "Nodes:\n";
+    for(int i = 0; i < MST_nodes.size(); i++){
+        std::cout << "node index: " << MST_nodes[i]->ID << " Data: " << MST_nodes[i]->data << std::endl;
+    }
 
+    std::cout << "edges:\n";
+    for(int k = 0; k < MST_edges.size(); k++){
+        std::cout << "Edge index: " << MST_edges[k]->ID << " node at end_A: " << MST_edges[k]->end_A->ID << " node at end_B: " << MST_edges[k]->end_B->ID << std::endl;
+    }
+}
+
+Graph::ShortPath::ShortPath(){
+    initialized = false;
+}
+
+bool Graph::ShortPath::CompareEdgeWeights(Edge * A, Edge *B){
+    return (A->weight < B->weight);
 }
 
 void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
-    //remove node that have no edges attached from algorithm input
+    //remove nodes that have no edges attached from algorithm input
     std::vector<Node *> cleaned_nodes = parent_nodes;
     for(int i = 0; i < parent_nodes.size(); i++){
         if(cleaned_nodes[i]->adjacent.size() < 1){
@@ -110,8 +149,6 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
             i--;
         }
     }
-
-    unvisited = cleaned_nodes;
     
     for(int n = 0; n < cleaned_nodes.size(); n++){
         previous.insert_or_assign(cleaned_nodes[n], nullptr); 
@@ -120,31 +157,123 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
     for(int n = 0; n < cleaned_nodes.size(); n++){
         distance.insert_or_assign(cleaned_nodes[n], INT_MAX); 
     }
-    Node * last_visited = nullptr;
-    Node * current = source;
-    distance.at(current) = 0;
-    Q.push_back(current);
-    while (Q.size() > 0){
 
-        Edge *smallest = nullptr; 
-        int last_weight = INT_MAX;
+    //make vector of visited edges
+    std::vector<Edge *> visited_edges;
+    //make vector of visited nodes
+    std::vector<Node *> visited_nodes;
 
-        for(int i = 0; i < current->adjacent.size(); i++){
-            if(current->adjacent[i]->weight < last_weight){
-                last_weight = current->adjacent[i]->weight;
-                smallest = current->adjacent[i];
-            }
-        }
-
-        if(distance.at(current) + smallest->weight < distance.at(smallest->end_B)){
-            distance.at(smallest->end_B) = distance.at(current) + smallest->weight;
-        }
-        
-            
-        visited.push_back(current);
-        auto qindex = std::find(Q.begin(), Q.end(), current);
-        Q.erase(qindex);
-
+    //IDK what the second half of this line really does, but Chat GPT said it would work ¯\_(ツ)_/¯
+    std::priority_queue<Edge *, std::vector<Edge *>, decltype(&CompareEdgeWeights)> Q(CompareEdgeWeights);
+    
+    distance.at(source) = 0;
+    //add all atached edges from source to priority queue
+    for(int i = 0; i < source->adjacent.size(); i++){
+        Q.push(source->adjacent[i]);
     }
 
+    //add the source to the visited list
+    visited_nodes.push_back(source);
+    //set progenitor to the source
+    Node * progenitor = source;
+    //while we still have edges in the Q to check
+    while (Q.size() > 0){
+        Edge * to_check = Q.top();
+        Q.pop();
+        //if end A is not a visited node, use it as the node to visit
+        if(std::count(visited_nodes.begin(), visited_nodes.end(), to_check->end_A) < 1){
+            //end B must be the node we come from and must be visited, so we set progenitor to end B
+            progenitor = to_check->end_B;
+            //if distance to the node we are checking is less than the distance map says, update it
+            if(distance.at(progenitor) + to_check->weight < distance.at(to_check->end_A)){
+                distance.at(to_check->end_A) = distance.at(progenitor) + to_check->weight;
+                //also update its previous
+                previous.at(to_check->end_A) = progenitor;
+            }
+
+            //add edge we just visited to the visited list
+            visited_edges.push_back(to_check);
+
+            //only queue the adjacent edes that arent checked and dont lead to a checked node
+            //if it leads to a checked node, then we know we have already enqueued that edge when we processed that node 
+            for(int i = 0; i < to_check->end_A->adjacent.size(); i++){
+                bool is_valid_edge = true;
+                //if either end A or B is a visited node, dont enqueue that adjacent edge
+                if(std::find(visited_nodes.begin(), visited_nodes.end(), to_check->end_A->adjacent[i]->end_A) != visited_nodes.end()
+                || std::find(visited_nodes.begin(), visited_nodes.end(), to_check->end_A->adjacent[i]->end_B) != visited_nodes.end()){
+                    is_valid_edge = false;
+                }
+
+                if(std::count(visited_edges.begin(), visited_edges.end(), to_check->end_A->adjacent[i]) < 1 && is_valid_edge){
+                    Q.push(to_check->end_A->adjacent[i]);
+                }
+            }
+
+            //since we added all the edges of the node to the Q, the node is now visited
+            visited_nodes.push_back(to_check->end_A);
+
+        //else if end B is not a visited node, use it as the node to visit
+        }else if(std::count(visited_nodes.begin(), visited_nodes.end(), to_check->end_B) < 1){
+            //end A must be the node we come from and must be visited, so we set progenitor to end A
+            progenitor = to_check->end_A;
+
+            //if distance to the node we are checking is less than the distance map says, update it
+            if(distance.at(progenitor) + to_check->weight < distance.at(to_check->end_B)){
+                distance.at(to_check->end_B) = distance.at(progenitor) + to_check->weight;
+                //also update its previous
+                previous.at(to_check->end_B) = progenitor;
+            }
+
+            //add edge we just visited to the visited list
+            visited_edges.push_back(to_check);
+
+            //only queue the adjacent edes that arent checked and dont lead to a checked node
+            //if it leads to a checked node, then we know we have already enqueued that edge when we processed that node
+            for(int i = 0; i < to_check->end_B->adjacent.size(); i++){
+                bool is_valid_edge = true;
+                //if either end A or B is a visited node, dont enqueue that adjacent edge
+                if(std::find(visited_nodes.begin(), visited_nodes.end(), to_check->end_B->adjacent[i]->end_A) != visited_nodes.end()
+                || std::find(visited_nodes.begin(), visited_nodes.end(), to_check->end_B->adjacent[i]->end_B) != visited_nodes.end()){
+                    is_valid_edge = false;
+                }
+
+                if(std::count(visited_edges.begin(), visited_edges.end(), to_check->end_B->adjacent[i]) < 1 && is_valid_edge){
+                    Q.push(to_check->end_B->adjacent[i]);
+                }
+            }
+
+            //since we added all the edges of the node to the Q, the node is now visited
+            visited_nodes.push_back(to_check->end_B);
+
+        }else{
+            std::cout << "edge is irrelevent: " << to_check->weight << std::endl;
+        }
+
+        std::cout << "in the while loop\n";
+
+    }
+    initialized = true;
+
+}
+
+//pass in the graph_nodes field of the Graph
+void Graph::ShortPath::print(std::vector<Node *> total_nodes){
+    //clean out nodes that werent used in Graph::ShortPath::dijkstras()
+    std::vector<Node *> cleaned_nodes = total_nodes;
+    for(int i = 0; i < total_nodes.size(); i++){
+        if(cleaned_nodes[i]->adjacent.size() < 1){
+            cleaned_nodes.erase(cleaned_nodes.begin() + i);
+            i--;
+        }
+    }
+
+    std::cout << "table of distances: \n";
+    for(int i = 0; i < cleaned_nodes.size(); i++){
+        std::cout << "Node ID: " << cleaned_nodes[i]->ID << " Distance: " << distance.at(cleaned_nodes[i]) << std::endl;
+    }
+    
+    std::cout << "table of previous: \n";
+    for(int k = 0; k < cleaned_nodes.size(); k++){
+        std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: " << previous.at(cleaned_nodes[k])->ID << std::endl;
+    }
 }
