@@ -4,8 +4,8 @@
 #include <algorithm>
 #include "graph.hpp"
 #include <limits>
-#include <functional>
-#include <memory>
+// #include <functional>
+// #include <memory>
 
 //NEED TO ADD DESTRUCTORS FOR ALL CLASSES
 
@@ -30,8 +30,8 @@ Edge::Edge(){
 Graph::Graph(){
     edge_ID_count = 0;
     node_ID_count = 0;
-    Graph::MST * MinSpanTree = new Graph::MST;
-    Graph::ShortPath * Dijkstra = new Graph::ShortPath;
+    MinSpanTree = new Graph::MST;
+    Dijkstra = new Graph::ShortPath;
 }
 
 Node *Graph::AddNode(int data){
@@ -83,8 +83,10 @@ void Graph::print(){
 
 Graph::MST::MST(){
     initialized = false;
-    MST_edges; //interacting with these vectors in any way causes a seg fault
-    MST_nodes;
+    // MST_edges; //interacting with these vectors in any way causes a seg fault
+    // MST_nodes;
+    MST_nodes_1 = std::vector<Node*>();
+    MST_edges_1 = std::vector<Edge*>();
 }
 
 void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std::vector<Edge*>& parent_edges){
@@ -97,8 +99,11 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
     // }else{
     //     std::cout << "initializing new MST\n";
     // }
+    
+    std::vector<Node *> MST_nodes = Graph::MST::MST_nodes_1;
+    std::vector<Edge *> MST_edges = Graph::MST::MST_edges_1;
 
-    std::cout << "MST code mark 1\n";
+    // std::cout << "MST code mark 1\n";
     
     std::vector<Node *> cleaned_nodes = parent_nodes;
     int total_nodes = parent_nodes.size();
@@ -110,18 +115,20 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
         }
     }
 
-    std::cout << "MST code mark 2\n";
+    // std::cout << "MST code mark 2\n";
+    // std::cout << MST_nodes.size() << std::endl;
 
     //make a copy of parent edges to sort by weight
     std::vector<Edge *> sorted_edges = parent_edges;
     //sort the edges from smallest to largest by weight
     std::sort(sorted_edges.begin(), sorted_edges.end(), CompareEdgeWeights());
 
-    std::cout << "MST code mark 3\n";
+    // std::cout << "MST code mark 3\n";
 
     int edge_index = 0;
     //while we have not included all nodes in the MST
     while (MST_nodes.size() < cleaned_nodes.size()){
+        // std::cout << "while loop running\n";
         //add the next edge
         MST_edges.push_back(sorted_edges[edge_index]);
         //if the A side node from edge hasnt already been included add it
@@ -140,10 +147,18 @@ void Graph::MST::MSTFromGraph(const std::vector<Node*>& parent_nodes, const std:
         edge_index++;
     }
     initialized = true;
-    std::cout << "MST code ran\n";
+    // std::cout << "MST code ran\n";
+
+    MST_edges_1 = MST_edges;
+    MST_nodes_1 = MST_nodes;
+
 };
 
 void Graph::MST::print(){
+    //debug...remove
+    std::vector<Node *> MST_nodes = Graph::MST::MST_nodes_1;
+    std::vector<Edge *> MST_edges = Graph::MST::MST_edges_1;
+
     std::cout << "MST\n";
     std::cout << "Nodes:\n";
     for(int i = 0; i < MST_nodes.size(); i++){
@@ -269,7 +284,7 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
             std::cout << "edge is irrelevent: " << to_check->weight << std::endl;
         }
 
-        std::cout << "in the while loop\n";
+        // std::cout << "in the while loop\n";
 
     }
     initialized = true;
@@ -278,6 +293,8 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
 
 //pass in the graph_nodes field of the Graph
 void Graph::ShortPath::print(std::vector<Node *> total_nodes){
+    std::cout << "shortest paths";
+
     //clean out nodes that werent used in Graph::ShortPath::dijkstras()
     std::vector<Node *> cleaned_nodes = total_nodes;
     for(int i = 0; i < total_nodes.size(); i++){
@@ -294,7 +311,7 @@ void Graph::ShortPath::print(std::vector<Node *> total_nodes){
     
     std::cout << "table of previous: \n";
     for(int k = 0; k < cleaned_nodes.size(); k++){
-        if(cleaned_nodes[k] != nullptr){
+        if(previous.at(cleaned_nodes[k]) != nullptr){
             std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: " << previous.at(cleaned_nodes[k])->ID << std::endl;
         }else{
             std::cout << "Node ID: " << cleaned_nodes[k]->ID << " Previous: Nullptr" << std::endl;

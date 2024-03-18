@@ -4,6 +4,7 @@
 #include <queue>
 
 class Edge;
+class Node;
 
 class Node {
     private:
@@ -48,6 +49,7 @@ class Graph {
     
     Graph();
     ~Graph();
+
     Node *AddNode(int);
     Edge *AddEdge(int, Node *, Node *);
     bool IsConnected();
@@ -59,8 +61,9 @@ class Graph::MST {
 
     public:
     bool initialized;
-    std::vector<Node *> MST_nodes;
-    std::vector<Edge *> MST_edges;
+
+    std::vector<Node *> MST_nodes_1;
+    std::vector<Edge *> MST_edges_1;
 
     MST();
     ~MST();

@@ -39,7 +39,7 @@ int main(){
     //print dijkstra
     graph->Dijkstra->print(graph->graph_nodes);
     
-    std::cout << "MAIN code mark 1\n";
+    std::cout << "MAIN ran successfully!\n";
 
     return 0;
 }
