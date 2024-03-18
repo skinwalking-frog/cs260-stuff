@@ -280,7 +280,30 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
             visited_nodes.push_back(to_check->end_B);
 
         }else{
-            std::cout << "edge is irrelevent, edge ID: " << to_check->ID << std::endl;
+            //if we are here, both ends are checked nodes. Therefore we check both directions of the edge to see if theres any new shorter path.
+            progenitor = to_check->end_A;
+
+            //if distance to the node we are checking is less than the distance map says, update it
+            if(distance.at(progenitor) + to_check->weight < distance.at(to_check->end_B)){
+                distance.at(to_check->end_B) = distance.at(progenitor) + to_check->weight;
+                //also update its previous
+                previous.at(to_check->end_B) = progenitor;
+            }
+
+            //check the other direction
+            progenitor = to_check->end_B;
+            //if distance to the node we are checking is less than the distance map says, update it
+            if(distance.at(progenitor) + to_check->weight < distance.at(to_check->end_A)){
+                distance.at(to_check->end_A) = distance.at(progenitor) + to_check->weight;
+                //also update its previous
+                previous.at(to_check->end_A) = progenitor;
+            }
+            
+            //add edge we just visited to the visited list
+            visited_edges.push_back(to_check);
+
+            //no need to queue new edges because both nodes are already checked, meaning all their adjacent edges are already added to the queue
+
         }
 
         // std::cout << "in the while loop\n";
