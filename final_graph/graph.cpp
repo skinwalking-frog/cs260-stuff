@@ -198,7 +198,6 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
     //make vector of visited nodes
     std::vector<Node *> visited_nodes;
 
-    //IDK what the second half of this line really does, but Chat GPT said it would work ¯\_(ツ)_/¯
     std::priority_queue<Edge *, std::vector<Edge *>, CompareEdgeWeights> Q;
     
     distance.at(source) = 0;
@@ -281,7 +280,7 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
             visited_nodes.push_back(to_check->end_B);
 
         }else{
-            std::cout << "edge is irrelevent: " << to_check->weight << std::endl;
+            std::cout << "edge is irrelevent, edge ID: " << to_check->ID << std::endl;
         }
 
         // std::cout << "in the while loop\n";
@@ -293,7 +292,7 @@ void Graph::ShortPath::dijkstras(Node * source, const std::vector<Node*>& parent
 
 //pass in the graph_nodes field of the Graph
 void Graph::ShortPath::print(std::vector<Node *> total_nodes){
-    std::cout << "shortest paths";
+    std::cout << "shortest paths\n";
 
     //clean out nodes that werent used in Graph::ShortPath::dijkstras()
     std::vector<Node *> cleaned_nodes = total_nodes;
